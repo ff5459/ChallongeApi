@@ -17,8 +17,6 @@ namespace ChallongeApi
 
         /// <summary>
         /// Constructor for initializing <paramref name="user"/>, <paramref name="id"/> and working with tournaments.
-        /// <para/>
-        /// Note: You do not always need <paramref name="id"/> to be initialized, call <see cref="Tournament(User)"/> instead.
         /// </summary>
         /// <param name="user"></param>
         /// <param name="id"> Id of scoped tournament.</param>
@@ -29,25 +27,17 @@ namespace ChallongeApi
         }
 
         /// <summary>
-        /// Constructor for initializing <paramref name="user"/> and working with tournaments.
-        /// </summary>
-        public Tournament(User user)
-        {
-            this.user = user;
-        }
-
-        /// <summary>
         /// Creates a new tournament.
         /// <para/>
         /// <see href="https://api.challonge.com/v1/documents/tournaments/create">See documentation</see>
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public async Task<JObject> Create(Dictionary<string, string> parameters)
+        public static async Task<JObject> Create(Dictionary<string, string> parameters)
         {
             if (!parameters.ContainsKey("tournament[name]") || !parameters.ContainsKey("tournament[url]"))
-                throw new ArgumentNullException(nameof(parameters), "Missing tournament[name] and/or tournament[url]");
+                throw new ArgumentNullException(nameof(parameters), "Missing tournament[name] or tournament[url]");
+
             return await User.ParseAndFetch(MethodType.POST, TPATH + ".json", parameters);
         }
 
@@ -58,11 +48,8 @@ namespace ChallongeApi
         /// <see href="https://api.challonge.com/v1/documents/tournaments/show">See documentation</see>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> Show(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.GET, $"{TPATH}/{id}.json", parameters);
         }
 
@@ -73,11 +60,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> Update(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.PUT, $"{TPATH}/{id}.json", parameters);
         }
 
@@ -87,11 +71,8 @@ namespace ChallongeApi
         /// <see href="https://api.challonge.com/v1/documents/tournaments/destroy">See documentation</see>
         /// </summary>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> Destroy()
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.DELETE, $"{TPATH}/{id}.json", null);
         }
 
@@ -106,11 +87,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> ProcessCheckIns(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/process_check_ins.json", parameters);
         }
 
@@ -123,11 +101,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> AbortCheckIns(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/abort_check_in.json", parameters);
         }
 
@@ -138,11 +113,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> Start(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/start.json", parameters);
         }
 
@@ -153,11 +125,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> Finalize(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/finalize.json", parameters);
         }
 
@@ -168,11 +137,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> Reset(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/reset.json", parameters);
         }
 
@@ -183,11 +149,8 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> OpenForPredictions(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/open_for_predictions.json", parameters);
         }
 
@@ -216,12 +179,47 @@ namespace ChallongeApi
         /// </summary>
         /// <param name="parameters">A set of key-value pairs.</param>
         /// <returns>Response as <see cref="JObject"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         public async Task<JObject> AddParticipant(Dictionary<string, string>? parameters)
         {
-            if (id is null)
-                throw new ArgumentNullException(id, "id is not initialized.");
             return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/participants.json", parameters);
+        }
+
+        /// <summary>
+        /// Deletes all participants in a tournament. (Only allowed if tournament hasn't started yet)
+        /// </summary>
+        /// <returns>Response as <see cref="JObject"/></returns>
+        public async Task<JObject> Clear()
+        {
+            return await User.ParseAndFetch(MethodType.DELETE, $"{TPATH}/{id}/participants/clear.json", null);
+        }
+
+        /// <summary>
+        /// Randomize seeds among participants. Only applicable before a tournament has started.
+        /// </summary>
+        /// <returns>Response as <see cref="JObject"/></returns>
+        public async Task<JObject> Randomize()
+        {
+            return await User.ParseAndFetch(MethodType.POST, $"{TPATH}/{id}/participants/randomize.json", null);
+        }
+
+        /// <summary>
+        /// Retrieves a tournament's match list.
+        /// <para/>
+        /// <see href="https://api.challonge.com/v1/documents/matches/index#">See documentation</see>
+        /// </summary>
+        /// <returns>A set of matches as <see cref="List{Match}"/></returns>
+        public async Task<List<Match>> GetMatches()
+        {
+            List<Match> MatchList = new List<Match>();
+            var Result = await User.Fetch(MethodType.GET, $"{TPATH}/{id}/matches.json", null);
+            JArray Matches = JArray.Parse(Result);
+            foreach (JObject MatchJObject in Matches)
+            {
+                string ResultCut = MatchJObject.ToString()[14..^1];
+                Match match = JsonConvert.DeserializeObject<Match>(ResultCut)!;
+                MatchList.Add(match);
+            }
+            return MatchList;
         }
 
         [JsonProperty]

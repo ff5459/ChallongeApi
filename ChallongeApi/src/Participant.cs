@@ -25,6 +25,8 @@ namespace ChallongeApi
 
         /// <summary>
         /// Updates the attributes of a tournament participant.
+        /// <para/>
+        /// <see href="https://api.challonge.com/v1/documents/participants/update">See documentation</see>
         /// </summary>
         /// <param name="parameters">Update parameters</param>
         /// <returns>Response as <see cref="JObject"/></returns>
@@ -36,17 +38,28 @@ namespace ChallongeApi
         /// <summary>
         /// Checks a participant in, setting checked_in_at to the current time.
         /// </summary>
-        public async Task CheckIn()
+        /// <returns>Response as <see cref="JObject"/></returns>
+        public async Task<JObject> CheckIn()
         {
-            await Task.Run(() => User.Fetch(MethodType.POST, $"tournaments/{tournament_id}/participants/{id}/check_in.json", null));
+            return await User.ParseAndFetch(MethodType.POST, $"tournaments/{tournament_id}/participants/{id}/check_in.json", null);
         }
 
         /// <summary>
         /// Marks a participant as having not checked in, setting checked_in_at to null.
         /// </summary>
-        public async Task UndoCheckIn()
+        /// <returns>Response as <see cref="JObject"/></returns>
+        public async Task<JObject> UndoCheckIn()
         {
-            await Task.Run(() => User.Fetch(MethodType.POST, $"tournaments/{tournament_id}/participants/{id}/undo_check_in.json", null));
+            return await User.ParseAndFetch(MethodType.POST, $"tournaments/{tournament_id}/participants/{id}/undo_check_in.json", null);
+        }
+
+        /// <summary>
+        /// If the tournament has not started, deletes a participant, automatically filling in the abandoned seed number. If tournament is underway, marks a participant inactive, automatically forfeiting his/her remaining matches.
+        /// </summary>
+        /// <returns>Response as <see cref="JObject"/></returns>
+        public async Task<JObject> Destroy()
+        {
+            return await User.ParseAndFetch(MethodType.DELETE, $"tournaments/{tournament_id}/participants/{id}.json", null);
         }
 
         [JsonProperty]

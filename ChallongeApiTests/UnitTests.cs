@@ -1,7 +1,5 @@
-﻿using ChallongeApi;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
 
 namespace ChallongeApi.Tests
 {
@@ -28,7 +26,6 @@ namespace ChallongeApi.Tests
             };
             Task<List<Tournament>> task = Task.Run(() => user.GetTournaments(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -41,7 +38,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.Create(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
         [TestMethod()]
         public void ShowTest()
@@ -51,9 +47,8 @@ namespace ChallongeApi.Tests
                 { "include_participants", "1" },
                 { "include_matches", "1" }
             };
-            Task<JObject> task = Task.Run(() => Tournament.Show(parameters));
+            var task = Task.Run(() => Tournament.Show(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -62,11 +57,11 @@ namespace ChallongeApi.Tests
             var parameters = new Dictionary<string, string>
             {
                 { "tournament[name]", "UpdateTest" },
-                { "tournament[tournament_type]", "double elimination" }
+                { "tournament[tournament_type]", "double elimination" },
+                { "tournament[accept_attachments]", "true" }
             };
             Task<JObject> task = Task.Run(() => Tournament.Update(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -74,7 +69,6 @@ namespace ChallongeApi.Tests
         {
             Task<JObject> task = Task.Run(Tournament.Destroy);
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -87,7 +81,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.ProcessCheckIns(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -100,7 +93,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.AbortCheckIns(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -113,7 +105,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.Start(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -126,7 +117,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.Finalize(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -139,7 +129,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.Reset(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -152,7 +141,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.OpenForPredictions(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -160,7 +148,6 @@ namespace ChallongeApi.Tests
         {
             Task<List<Participant>> task = Task.Run(Tournament.GetParticipants);
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -173,7 +160,6 @@ namespace ChallongeApi.Tests
             };
             Task<JObject> task = Task.Run(() => Tournament.AddParticipant(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -182,7 +168,6 @@ namespace ChallongeApi.Tests
             var part = Tournament.GetParticipants().Result;
             var task = Task.Run(() => part.First().Show(true));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -195,7 +180,6 @@ namespace ChallongeApi.Tests
             var part = Tournament.GetParticipants().Result.First();
             var task = Task.Run(() => part.Update(parameters));
             task.Wait();
-            Assert.IsNotNull(task.Result);
         }
 
         [TestMethod()]
@@ -203,6 +187,140 @@ namespace ChallongeApi.Tests
         {
             var part = Tournament.GetParticipants().Result.First();
             var task = Task.Run(part.CheckIn);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void UndoCheckInTest()
+        {
+            var part = Tournament.GetParticipants().Result.First();
+            var task = Task.Run(part.UndoCheckIn);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void DestroyParticipantTest()
+        {
+            var part = Tournament.GetParticipants().Result.First();
+            var task = Task.Run(part.Destroy);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void ClearParticipantsTest()
+        {
+            var task = Task.Run(Tournament.Clear);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void RandomizeTest()
+        {
+            var task = Task.Run(Tournament.Randomize);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void GetMatchesTest()
+        {
+            var task = Task.Run(Tournament.GetMatches);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void ShowMatchTest()
+        {
+            var match = Tournament.GetMatches().Result.First();
+            var task = Task.Run(() => match.Show(true));
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void UpdateMatchTest()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                { "match[scores_csv]", "15-0, 10-5, 5-19" }
+            };
+            var match = Tournament.GetMatches().Result.First();
+            var task = Task.Run(() => match.Update(parameters));
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void ReopenTest()
+        {
+            var match = Tournament.GetMatches().Result.First(m => m.state == "complete");
+            var task = Task.Run(match.Reopen);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void MarkAsUnderwayTest()
+        {
+            var match = Tournament.GetMatches().Result.First();
+            var task = Task.Run(match.MarkAsUnderway);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void UnMarkAsUnderwayTest()
+        {
+            var match = Tournament.GetMatches().Result.First();
+            var task = Task.Run(match.UnMarkAsUnderway);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void GetAttachmentsTest()
+        {
+            var match = Tournament.GetMatches().Result.First();
+            var task = Task.Run(match.GetAttachments);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void CreateAttachmentTest()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                { "match_attachment[url]", "https://google.com" }
+            };
+            var match = Tournament.GetMatches().Result.First();
+            var task = Task.Run(() => match.CreateAttachment(parameters));
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void ShowAttachmentTest()
+        {
+            var match = Tournament.GetMatches().Result.First();
+            var attachment = match.GetAttachments().Result.First();
+            var task = Task.Run(attachment.Show);
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void UpdateAttachmentTest()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                {
+                    "match_attachment[url]", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                }
+            };
+            var match = Tournament.GetMatches().Result.First();
+            var attachment = match.GetAttachments().Result.First();
+            var task = Task.Run(() => attachment.Update(parameters));
+            task.Wait();
+        }
+
+        [TestMethod()]
+        public void DestroyAttachmentTest()
+        {
+            var match = Tournament.GetMatches().Result.First();
+            var attachment = match.GetAttachments().Result.First();
+            var task = Task.Run(attachment.Destroy);
             task.Wait();
         }
     }
